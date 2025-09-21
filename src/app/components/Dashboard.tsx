@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useMemo } from "react"
@@ -18,6 +17,8 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts"
+import { CSVLink } from "react-csv"
+import { Button } from "@/components/ui/Button"
 
 interface DashboardProps {
   expenses: Expense[]
@@ -64,51 +65,80 @@ export function Dashboard({ expenses }: DashboardProps) {
     }))
   }, [expenses])
 
+  const csvData = useMemo(() => {
+    return expenses.map(({ date, category, amount, description }) => ({
+      Date: date,
+      Category: category,
+      Amount: amount,
+      Description: description,
+    }))
+  }, [expenses])
+
+  const headers = [
+    { label: "Date", key: "Date" },
+    { label: "Category", key: "Category" },
+    { label: "Amount", key: "Amount" },
+    { label: "Description", key: "Description" },
+  ]
+
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Total Spending</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">${totalSpending.toFixed(2)}</div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>This Month</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">${monthlySpending.toFixed(2)}</div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Top Category</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{topCategory ? topCategory[0] : 'N/A'}</div>
-          <p className="text-xs text-muted-foreground">
-            {topCategory ? `$${topCategory[1].toFixed(2)}` : ''}
-          </p>
-        </CardContent>
-      </Card>
-      <Card className="col-span-full">
-        <CardHeader>
-          <CardTitle>Spending by Category</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={spendingByCategory}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="value" fill="#8884d8" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+    <div>
+      <div className="mb-4">
+        <CSVLink data={csvData} headers={headers} filename={"expenses.csv"}>
+          <Button>Export Data</Button>
+        </CSVLink>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Total Spending</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              ${totalSpending.toFixed(2)}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>This Month</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              ${monthlySpending.toFixed(2)}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Top Category</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {topCategory ? topCategory[0] : "N/A"}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {topCategory ? `$${topCategory[1].toFixed(2)}` : ""}
+            </p>
+          </CardContent>
+        </Card>
+        <Card className="col-span-full">
+          <CardHeader>
+            <CardTitle>Spending by Category</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={spendingByCategory}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="value" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

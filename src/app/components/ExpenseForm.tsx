@@ -29,7 +29,7 @@ const formSchema = z.object({
   description: z.string().min(2, {
     message: "Description must be at least 2 characters.",
   }),
-  amount: z.coerce.number().positive({
+  amount: z.number().positive({
     message: "Amount must be a positive number.",
   }),
   category: z.enum(["Food", "Transportation", "Entertainment", "Shopping", "Bills", "Other"]),
@@ -85,7 +85,7 @@ export function ExpenseForm({ onSubmit, expense }: ExpenseFormProps) {
             <FormItem>
               <FormLabel>Amount</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="e.g. 3.50" {...field} />
+                <Input type="number" placeholder="e.g. 3.50" {...field} onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)} />
               </FormControl>
               <FormMessage />
             </FormItem>

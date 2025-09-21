@@ -3,7 +3,7 @@
 
 import { useState, useMemo } from "react"
 import { useExpenses } from "@/hooks/useExpenses"
-import { Category, Expense } from "@/types"
+import { Category } from "@/types"
 import Header from "@/app/components/Header"
 import { Dashboard } from "@/app/components/Dashboard"
 import { ExpenseForm } from "@/app/components/ExpenseForm"
@@ -81,7 +81,9 @@ export default function Home() {
                 <CardTitle>Add New Expense</CardTitle>
               </CardHeader>
               <CardContent>
-                <ExpenseForm onSubmit={addExpense} />
+                <ClientOnly>
+                  <ExpenseForm onSubmit={addExpense} />
+                </ClientOnly>
               </CardContent>
             </Card>
           </div>
